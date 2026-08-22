@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./**/.env)",
+      "Read(./.env.local)",
+      "Read(./**/.env.local)",
+      "Read(./.env.*.local)",
+      "Read(./.env.production)",
+      "Read(./.env.development)",
+      "Read(./.env.staging)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.p12)",
+      "Read(./**/*.pfx)",
+      "Read(./**/*.jks)",
+      "Read(./**/id_rsa*)",
+      "Read(./**/id_dsa*)",
+      "Read(./**/id_ecdsa*)",
+      "Read(./**/id_ed25519*)",
+      "Read(./**/.ssh/**)",
+      "Read(./**/.aws/**)",
+      "Read(./**/.gnupg/**)",
+      "Read(./**/.netrc)",
+      "Read(./**/.npmrc)",
+      "Read(./**/.pypirc)",
+      "Read(./**/.git-credentials)",
+      "Read(./**/credentials.json)",
+      "Read(./**/service-account*.json)",
+      "Read(./**/secrets/**)"
+    ],
+
+    "allow": [
+      "Read(./config.json)",
+      "Read(./config.example.json)",
+      "Read(./.env.example)",
+      "WebSearch",
+      "Bash(./setup.sh)",
+      "Bash(./.claude/skills/blog-images/render_svg.sh:*)",
+      "Bash(.venv/bin/python .claude/skills/video-thumbnail/generate_thumbnail.py:*)",
+      "Bash(.venv/bin/yt-dlp:*)"
+    ]
+  },
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'for d in \"$CLAUDE_PROJECT_DIR\" . ..; do [ -f \"$d/.claude/hooks/guard_secrets.py\" ] && exec python3 \"$d/.claude/hooks/guard_secrets.py\"; done; echo \"guard_secrets.py not found, Read deny rules still apply\" >&2; exit 0'",
+            "timeout": 10,
+            "statusMessage": "Checking for credential access"
+          }
+        ]
+      }
+    ]
+  }
+}

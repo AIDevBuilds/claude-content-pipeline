@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  /* Every colour below comes from `brand.thumbnail` in config.json — generate_thumbnail.py
+     injects a :root block overriding these defaults before rendering. Edit config.json,
+     not this file, to re-brand. --accent-rgb is the accent as "r,g,b" so it can be used
+     inside rgba() for the translucent variants. */
+  :root {
+    --bg: #000000;
+    --bg-alt: #050505;
+    --accent: #00ff88;
+    --accent-rgb: 0,255,136;
+    --text: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1280px; height: 720px; overflow: hidden; background: var(--bg); }
+
+  .thumb {
+    width: 1280px;
+    height: 720px;
+    background: var(--bg-alt);
+    position: relative;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Grid bg removed — fine lines on a dark bg waste YouTube's 14KB JPEG
+     budget and blur the headline in the grid thumbnail. Flat black compresses
+     to almost nothing, leaving the budget for the text. */
+  .grid {
+    display: none;
+  }
+
+  /* Big diagonal color block - right side for face/visual */
+  .right-panel {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 580px;
+    height: 820px;
+    background: linear-gradient(160deg, rgba(var(--accent-rgb),0.08) 0%, rgba(0,0,0,0) 100%);
+    transform: skewX(-8deg);
+    border-left: 2px solid rgba(var(--accent-rgb),0.2);
+  }
+
+  /* Glow removed — soft gradients compress poorly into the 14KB grid JPEG. */
+  .glow {
+    display: none;
+  }
+
+  /* Top label bar */
+  .top-bar {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .channel-tag {
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 20px;
+    font-weight: 900;
+    padding: 6px 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .ep-tag {
+    border: 1px solid rgba(var(--accent-rgb),0.4);
+    color: rgba(var(--accent-rgb),0.8);
+    font-size: 18px;
+    padding: 6px 16px;
+    letter-spacing: 2px;
+  }
+
+  /* MAIN HEADLINE */
+  .headline {
+    position: absolute;
+    top: 110px;
+    left: 40px;
+    width: 740px;
+  }
+
+  .headline-top {
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* Inter Black — embedded webfont (see build_font_face in generate_thumbnail.py).
+     Real 900 weight that stays crisp through YouTube's WebP recompression. */
+  .headline-main {
+    font-family: 'Inter', 'Arial Black', sans-serif;
+    font-size: 104px;
+    font-weight: 900;
+    line-height: 0.95;
+    color: var(--text);
+    /* hard 3px dark outline so edges stay crisp through YouTube's recompress,
+       plus a soft drop for depth */
+    text-shadow:
+      -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000,
+       0 -3px 0 #000, 0 3px 0 #000, -3px 0 0 #000, 3px 0 0 #000,
+       0 5px 16px rgba(0,0,0,0.7);
+    letter-spacing: -3px;
+    text-transform: uppercase;
+  }
+
+  .headline-main .highlight {
+    color: var(--accent);
+    /* hard outline keeps the accent crisp; glow toned down (soft glow smears) */
+    text-shadow:
+      -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000,
+       0 -3px 0 #000, 0 3px 0 #000, -3px 0 0 #000, 3px 0 0 #000,
+       0 0 10px rgba(var(--accent-rgb),0.35);
+  }
+
+  .headline-sub {
+    font-family: 'Inter', 'Arial Black', sans-serif;
+    font-weight: 800;
+    font-size: 27px;
+    color: rgba(255,255,255,0.95);
+    margin-top: 22px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.55;
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+  }
+
+  /* Bottom tool badges */
+  .bottom-bar {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .tool-badge {
+    border: 2px solid rgba(var(--accent-rgb),0.45);
+    color: rgba(255,255,255,0.9);
+    font-size: 18px;
+    padding: 8px 18px;
+    letter-spacing: 2px;
+    background: rgba(var(--accent-rgb),0.04);
+    text-transform: uppercase;
+  }
+
+  .tool-badge.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(var(--accent-rgb),0.1);
+    box-shadow: 0 0 15px rgba(var(--accent-rgb),0.2);
+  }
+
+  /* Result badge - big eye-catching element */
+  .result-badge {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    width: 220px;
+    height: 220px;
+    border: 4px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--accent-rgb),0.08);
+    text-align: center;
+  }
+
+  .result-badge .big-text {
+    font-size: 70px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    line-height: 1;
+  }
+
+  .result-badge .small-text {
+    font-size: 18px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Face placeholder area - right side */
+  .face-area {
+    position: absolute;
+    right: 40px;
+    bottom: 40px;
+    width: 440px;
+    height: 440px;
+    border: 2px dashed rgba(var(--accent-rgb),0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--accent-rgb),0.02);
+  }
+
+  .face-area-label {
+    color: rgba(var(--accent-rgb),0.3);
+    font-size: 16px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  .face-area-icon {
+    font-size: 60px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+  }
+
+  /* Vertical line separator */
+  .v-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 510px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(var(--accent-rgb),0.3) 30%, rgba(var(--accent-rgb),0.3) 70%, transparent);
+  }
+
+  /* Corner brackets */
+  .corner { position: absolute; width: 30px; height: 30px; }
+  .c-tl { top: 15px; left: 15px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .c-br { bottom: 15px; right: 15px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+</style>
+</head>
+<body>
+<div class="thumb">
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="right-panel"></div>
+  <div class="v-line"></div>
+
+  <!-- Corner accents -->
+  <div class="corner c-tl"></div>
+  <div class="corner c-br"></div>
+
+  <!-- Top left labels. channel-tag is replaced from config.json identity.brandName. -->
+  <div class="top-bar">
+    <div class="channel-tag">BRAND</div>
+    <div class="ep-tag">AI vs CODE</div>
+  </div>
+
+  <!-- Main headline — every field below is replaced per video by generate_thumbnail.py -->
+  <div class="headline">
+    <div class="headline-top">// Can AI build a</div>
+    <div class="headline-main">
+      <span class="highlight">FULLY</span><br>WORKING<br>CHATBOT?
+    </div>
+    <div class="headline-sub">in 30 minutes · live test</div>
+  </div>
+
+  <!-- Bottom tools used -->
+  <div class="bottom-bar">
+    <div class="tool-badge active">Claude Code</div>
+    <div class="tool-badge">FastAPI</div>
+    <div class="tool-badge">Python</div>
+  </div>
+
+  <!-- Result/time circle - eye catching -->
+  <div class="result-badge">
+    <div class="big-text">30</div>
+    <div class="small-text">minutes<br>challenge</div>
+  </div>
+
+  <!-- Right side: face/screenshot area -->
+  <div class="face-area">
+    <div class="face-area-icon">📸</div>
+    <div class="face-area-label">
+      PLACE YOUR<br>SCREENSHOT<br>or FACE HERE<br><br>
+      <span style="font-size:13px; color: rgba(var(--accent-rgb),0.2);">440 × 440 px</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

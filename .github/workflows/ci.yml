@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Least privilege: nothing here writes to the repo.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Guards the silent failure modes: malformed settings.json disables every
+      # permission rule in it, malformed frontmatter stops a skill loading, and a
+      # hardcoded brand value would be inherited by everyone who forks this.
+      - name: Validate config, settings, frontmatter and identity
+        run: python3 scripts/validate.py
+
+      # The credential guard is a security control, so it gets real tests.
+      - name: Test the secret-access guard hook
+        run: python3 .claude/hooks/test_guard_secrets.py
+
+  secrets:
+    name: Scan for committed secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # gitleaks needs history to scan commits, not just the working tree.
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

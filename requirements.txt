@@ -1,0 +1,14 @@
+# Shared by every skill in this repo. One venv at the repo root: ./.venv
+# Install with ./setup.sh (which also fetches the Chromium build Playwright needs).
+
+# blog-images — rasterizes hand-written SVG diagrams to PNG.
+# Also needs the native cairo library; setup.sh verifies it can actually load.
+cairosvg==2.9.0
+
+# video-thumbnail — renders template.html in headless Chromium, then downsamples.
+playwright==1.62.0
+Pillow==12.3.0
+
+# video-scout — lists the channel's published videos for gap analysis, no API key needed.
+# Deliberately unpinned: yt-dlp tracks YouTube's changes and a pin goes stale fast.
+yt-dlp
