@@ -1,0 +1,46 @@
+{
+  "_note": "Generic worked example. Copy to video-data/shorts/<slug>.json, point audio at your own voiceover, and add timings from a transcription (without timings they are estimated from the text). Colours, brand name and URL come from config.json.",
+  "eyebrow": "Series One",
+  "audio": "video-data/shorts/example.mp3",
+  "text": "A cache makes reads fast until the data changes. Then every read gets the old value until the entry expires.",
+  "chunks": [
+    "A cache makes",
+    "reads fast",
+    "until the data",
+    "changes.",
+    "Then every read",
+    "gets the old value",
+    "until the entry",
+    "expires."
+  ],
+  "emphasis": ["old", "expires"],
+  "headers": [
+    {"at": 0, "title": "Your cache is fast.", "accent": "Is it right?", "accentAt": 1.5},
+    {"at": 4.5, "title": "Stale until", "accent": "the entry expires.", "accentAt": 6.0}
+  ],
+  "nodes": {
+    "app": {"icon": "bot", "label": "Service"},
+    "cache": {"icon": "package", "label": "Cache", "sub": "TTL 5 min", "tone": "a"},
+    "db": {"icon": "table", "label": "Database", "sub": "source of truth", "tone": "dark"}
+  },
+  "states": [
+    {
+      "at": 0,
+      "edges": [["app", "cache"], ["cache", "db"]],
+      "nodes": {
+        "app": {"x": 190, "y": 860, "w": 230, "h": 360},
+        "cache": {"x": 496, "y": 860, "w": 230, "h": 360},
+        "db": {"x": 800, "y": 860, "w": 230, "h": 360}
+      }
+    },
+    {
+      "at": 3.2,
+      "edges": [["app", "cache", {"tone": "b", "glow": true}], ["cache", "db"]],
+      "nodes": {
+        "app": {"x": 190, "y": 860, "w": 230, "h": 360},
+        "cache": {"x": 496, "y": 860, "w": 230, "h": 360, "tone": "b", "glow": true, "sub": "old value"},
+        "db": {"x": 800, "y": 860, "w": 230, "h": 360, "sub": "new value"}
+      }
+    }
+  ]
+}

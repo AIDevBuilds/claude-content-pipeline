@@ -175,27 +175,100 @@ for path in sorted(REPO.glob(".claude/skills/*/SKILL.md")):
           else f"name {fm.get('name')!r} != folder {path.parent.name!r}")
 
 
-# ── Identity must stay in config ──────────────────────────────────────────────
-# This protects the whole point of the config layer: a brand value hardcoded back
-# into a skill means every forker inherits it.
+# ── Public files stay generic ─────────────────────────────────────────────────
+# Everything that would be published must work for any user: identity lives in
+# config.json, personal files live in gitignored folders. These checks use only
+# generic patterns, so they name nobody. scripts/pre-commit adds the personal
+# terms locally.
 
-section("No hardcoded identity")
+section("Public files stay generic")
 
-identity_patterns = [
-    r"aidevbuilds",
-    r"hashnode\.dev",
-    r"medium\.com/@",
-    r"newsletter\.[a-z0-9-]+\.com",
+import subprocess  # noqa: E402
+
+
+def public_files() -> list[str]:
+    """Tracked files plus untracked files git would add (i.e. not ignored)."""
+    try:
+        out = []
+        for args in (["ls-files"], ["ls-files", "-o", "--exclude-standard"]):
+            out += subprocess.run(["git", *args], cwd=REPO, capture_output=True,
+                                  text=True, check=True).stdout.splitlines()
+        return sorted({p for p in out if (REPO / p).is_file()})
+    except (OSError, subprocess.CalledProcessError):
+        return []
+
+
+TEXT = {".md", ".json", ".py", ".sh", ".ts", ".tsx", ".js", ".html", ".css",
+        ".txt", ".yml", ".yaml", ".toml", ""}
+SKIP = ("package-lock.json", "assets/icons/lucide/tags.json")
+files = [p for p in public_files()
+         if Path(p).suffix in TEXT and not p.endswith(SKIP) and "node_modules/" not in p]
+texts = {p: (REPO / p).read_text(encoding="utf-8", errors="replace") for p in files}
+check("public file list available", bool(files), "git ls-files returned nothing")
+
+PRIVATE_PREFIXES = ("private/", "blog-data/", "video-data/")
+leaked_paths = [p for p in public_files()
+                if (p.startswith(PRIVATE_PREFIXES) and not p.endswith(".gitkeep"))
+                or p in ("config.json", "CLAUDE.local.md")]
+check("no private paths are tracked or addable", not leaked_paths, ", ".join(leaked_paths[:5]))
+
+PLACEHOLDER = re.compile(r"your|example|<", re.IGNORECASE)
+channel_patterns = [
+    r"[a-z0-9-]{3,}\.hashnode\.dev", r"medium\.com/(?:feed/)?@[\w.-]{3,}", r"dev\.to/[\w-]{3,}",
+    r"youtube\.com/@[\w.-]{3,}", r"newsletter\.[a-z0-9-]+\.[a-z]+",
 ]
-offenders: list[str] = []
-for path in sorted(REPO.glob(".claude/**/*.md")):
-    text = path.read_text(encoding="utf-8").lower()
-    for pat in identity_patterns:
-        if re.search(pat, text):
-            offenders.append(f"{path.relative_to(REPO)} matches /{pat}/")
+brand_hits = []
+for p, text in texts.items():
+    for pat in channel_patterns:
+        for m in re.finditer(pat, text, re.IGNORECASE):
+            if not PLACEHOLDER.search(m.group(0)):
+                brand_hits.append(f"{p}: {m.group(0)}")
+check("no real channel URLs outside config.json", not brand_hits, "; ".join(brand_hits[:4]))
 
-check("agents and skills carry no brand values", not offenders,
-      "; ".join(offenders[:4]))
+home = re.compile("|".join([r"/" + "Users/[A-Za-z]", r"/" + "home/[a-z]", r"[A-Z]:\\\\" + "Users"]))
+home_hits = [p for p, text in texts.items() if home.search(text) and p != "scripts/validate.py"]
+check("no home-folder paths", not home_hits, ", ".join(home_hits[:4]))
+
+EMAIL = re.compile(r"(?<![\w/@])[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[A-Za-z]{2,}\b")
+OK_EMAIL = re.compile(r"noreply|no-reply|example\.|@users\.|^git@github\.com$", re.IGNORECASE)
+email_hits = [f"{p}: {m.group(0)}" for p, text in texts.items()
+              for m in EMAIL.finditer(text) if not OK_EMAIL.search(m.group(0))]
+check("no personal email addresses", not email_hits, "; ".join(email_hits[:4]))
+
+if example:
+    def strings(obj):
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if not k.startswith("_"):
+                    yield from strings(v)
+        elif isinstance(obj, str):
+            yield obj
+    ident = example.get("identity", {})
+    who = [ident.get("brandName", ""), *strings(ident.get("author", {}))]
+    links = [s for s in strings(example.get("channels", {})) if "/" in s or s.startswith("@")]
+    real = [s for s in who + links if s and not PLACEHOLDER.search(s)
+            and not s.startswith(("One sentence", "Keep it"))]
+    check("config.example.json holds placeholders only", not real, "; ".join(real[:4]))
+
+runtime = re.compile(r"^\.claude/skills/[^/]+/(?:.*/)?(?:\.cache|out|\.work|__pycache__|public/audio)/")
+runtime_hits = [p for p in public_files() if runtime.search(p)]
+check("no runtime output inside skill folders", not runtime_hits, ", ".join(runtime_hits[:4]))
+
+local = REPO / "config.json"
+if local.exists():
+    cfg = json.loads(local.read_text(encoding="utf-8"))
+    ident = cfg.get("identity", {})
+    author = ident.get("author", {})
+    terms = [author.get("name"), author.get("role"), author.get("bio"), ident.get("tagline")]
+    for chan in cfg.get("channels", {}).values():
+        if isinstance(chan, dict):
+            terms += [re.sub(r"^https?://(www\.)?", "", v).rstrip("/") for k, v in chan.items()
+                      if k != "platform" and isinstance(v, str)]
+    brand_name = (ident.get("brandName") or "").lower()
+    terms = [t for t in terms if isinstance(t, str) and len(t) >= 4 and t.lower() != brand_name]
+    own_hits = [f"{p}: '{t[:30]}'" for p, text in texts.items() for t in terms
+                if t.lower() in text.lower()]
+    check("your config.json values appear in no public file", not own_hits, "; ".join(own_hits[:4]))
 
 
 # ── Nothing secret is committed ───────────────────────────────────────────────
@@ -224,7 +297,7 @@ section("Scripts")
 
 import os  # noqa: E402
 
-for rel in ["setup.sh", ".claude/skills/blog-images/render_svg.sh"]:
+for rel in ["setup.sh", "scripts/pre-commit", ".claude/skills/blog-images/scripts/render_svg.sh"]:
     path = REPO / rel
     check(f"{rel} is executable",
           path.exists() and os.access(path, os.X_OK),

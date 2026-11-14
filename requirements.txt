@@ -9,6 +9,9 @@ cairosvg==2.9.0
 playwright==1.62.0
 Pillow==12.3.0
 
+# Analytics exports — reads platform stats spreadsheets (e.g. LinkedIn's .xlsx export).
+openpyxl==3.1.5
+
 # video-scout — lists the channel's published videos for gap analysis, no API key needed.
 # Deliberately unpinned: yt-dlp tracks YouTube's changes and a pin goes stale fast.
 yt-dlp

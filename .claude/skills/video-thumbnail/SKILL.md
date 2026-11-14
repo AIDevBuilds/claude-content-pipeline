@@ -15,15 +15,16 @@ substitute an AI image generator even if one is available.
 ```bash
 ./setup.sh          # from the repo root — creates .venv and fetches Chromium
 ```
-Everything else is already in the skill folder: `template.html` and the embedded
-Inter webfont under `fonts/`.
+Everything else is already in the skill folder: `assets/template.html` and the
+embedded Inter webfont under `assets/fonts/`. The script is `scripts/generate_thumbnail.py`;
+`examples/example-output.png` shows what it produces.
 
 ## What is configurable, and where
 Brand colours and the channel tag come from `brand.thumbnail` and
-`identity.brandName` in `config.json` at the repo root. `template.html` reads them
+`identity.brandName` in `config.json` at the repo root. `assets/template.html` reads them
 as CSS custom properties, so **re-branding means editing `config.json`, never the
 template**. Layout changes (positions, sizes, which panels show) do belong in
-`template.html`.
+`assets/template.html`.
 
 ## Workflow
 
@@ -43,19 +44,19 @@ to fight it.
 
 **3. Render:**
 ```bash
-.venv/bin/python .claude/skills/video-thumbnail/generate_thumbnail.py \
+.venv/bin/python .claude/skills/video-thumbnail/scripts/generate_thumbnail.py \
     --video 01 \
-    --tag "AI AUTOPSY" \
-    --prefix "// I BUILT A REST API" \
-    --title "CLAUDE CODE\nMISSED THIS" \
-    --highlight "MISSED THIS" \
-    --subtitle "Alembic bypassed<br>No rate limiting" \
-    --tools "Claude Code,FastAPI,Alembic" \
-    --active-tool "Claude Code" \
-    --badge-number "3" \
-    --badge-label "bugs\nfound" \
-    --code "# database.py\nBase.metadata.create_all(bind=engine)" \
-    --bugline "create_all"
+    --tag "SYSTEM DESIGN" \
+    --prefix "// when the cache lies" \
+    --title "STALE\nREADS" \
+    --highlight "STALE" \
+    --subtitle "Cache-aside · TTLs · invalidation" \
+    --tools "Redis,PostgreSQL,Python" \
+    --active-tool "Redis" \
+    --badge-number "2" \
+    --badge-label "fixes\nshown" \
+    --code "def get(key):\n  v = cache.get(key)\n  if v is None:\n    v = db.read(key)\n    cache.set(key, v)\n  return v" \
+    --bugline "cache.set(key, v)"
 ```
 Output lands at `video-data/images/thumbnail-<video>.png` at exactly 1280x720.
 

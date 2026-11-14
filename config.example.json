@@ -6,7 +6,8 @@
       "name": "Your Name",
       "role": "Your Title",
       "bio": "One sentence of credibility used in video/SEO copy. Keep it factual."
-    }
+    },
+    "disclaimer": "Optional footer for every post and video description, e.g. 'Views are my own and not those of my employer.' Leave empty to skip."
   },
 
   "channels": {
@@ -36,18 +37,25 @@
   },
 
   "positioning": {
-    "_note": "OPTIONAL. Point your content at a career goal: the scouts will weight topic suggestions toward ones that build evidence for targetRole, and the writing skills will hold the altitude you set. Delete this whole block if you just want good topics with no career filter.",
+    "_note": "OPTIONAL. Point your content at a level of expertise: the scouts will weight topic suggestions toward ones that demonstrate targetLevel, and the writing skills will hold the altitude you set. Delete this whole block if you just want good topics with no level filter.",
 
-    "targetRole": "The role you want next, stated as a title plus its differentiator",
+    "targetLevel": "The level and expertise your content should demonstrate, e.g. a seniority plus a specialty",
+    "contentMix": {
+      "_note": "OPTIONAL. Ratio between the two content tracks in targetLevel (for example architecture vs AI). The topic scout and the writing skills keep the published mix close to it. Delete if you have only one track.",
+      "architecture": 2,
+      "ai": 1,
+      "architectureMeans": "What counts as the first track",
+      "aiMeans": "What counts as the second track"
+    },
     "horizonMonths": 18,
     "rationale": "Why this target is the right one. Worth writing down: it is what you will re-read when a tempting off-target topic comes along.",
 
     "audienceSeniority": "Who you are writing for, e.g. senior engineers and tech leads",
 
     "altitude": {
-      "_note": "The single most important filter. Content pitched below your target role signals the level below it. Be specific here.",
+      "_note": "The single most important filter. Content pitched below your target level signals the level below it. Be specific here.",
       "write": [
-        "The kinds of pieces that demonstrate the judgment your target role requires",
+        "The kinds of pieces that demonstrate the judgment your target level requires",
         "A decision, its alternatives, and what the chosen one cost",
         "A failure mode and the cause underneath it"
       ],
@@ -59,12 +67,12 @@
 
     "provenStrengths": [
       "Things you have genuinely done, stated specifically enough to be checked",
-      "Be honest here. Inflated entries produce content you cannot defend in an interview."
+      "Be honest here. Inflated entries produce content you cannot defend when a reader asks a follow-up question."
     ],
 
     "evidenceGaps": [
       {
-        "skill": "A capability your target role expects that you do not yet have",
+        "skill": "A capability your target level expects that you do not yet have",
         "detail": "What specifically is missing",
         "marketSignal": "Why you believe this matters, ideally from real job postings",
         "priority": "highest | high | medium"
@@ -75,7 +83,7 @@
       "_note": "How your experience should be described in bios, video descriptions and social copy. The accurate version is usually both safer and more persuasive than the inflated one.",
       "useThis": "The truthful, specific description of what you do and have built.",
       "neverClaim": [
-        "Specific overstatements to avoid, especially ones that would collapse under interview questioning"
+        "Specific overstatements to avoid, especially ones that would collapse under a knowledgeable reader's questions"
       ],
       "leadWith": "Your single strongest piece of evidence, and why it lands."
     }
@@ -84,7 +92,7 @@
   "series": [
     {
       "name": "Series One",
-      "description": "What this series covers and what separates it from the others. If positioning is set, each series should produce evidence for the target role."
+      "description": "What this series covers and what separates it from the others. If positioning is set, each series should demonstrate the target level."
     },
     {
       "name": "Series Two",
@@ -93,8 +101,14 @@
   ],
 
   "sharing": {
-    "enabledChannels": ["x", "whatsapp", "reddit"],
-    "toolAccountsToTag": ["@AnthropicAI"],
+    "enabledChannels": [
+      "x",
+      "whatsapp",
+      "reddit"
+    ],
+    "toolAccountsToTag": [
+      "@AnthropicAI"
+    ],
     "linkFormat": "plain",
     "_linkFormatNote": "'plain' posts the bare video URL. YouTube Studio's Traffic Sources report already buckets by referrer domain; YouTube does not parse utm_* params, and shortened links trip Reddit's spam filters."
   },
@@ -114,24 +128,38 @@
       "accentSuccess": "#4ADE80",
       "light": {
         "canvas": "#FFFFFF",
-        "surface": "#F3F5FA",
-        "stroke": "#D8DEEC",
-        "textPrimary": "#111A2E",
-        "textMuted": "#5B6785",
-        "accentA": "#0EA5E9"
+        "surface": "#F4F4F7",
+        "stroke": "#DCDCE4",
+        "textPrimary": "#18181B",
+        "textMuted": "#63636E",
+        "accentA": "#4F46E5",
+        "accentB": "#DC2626"
       },
       "fontStack": "-apple-system, \"Helvetica Neue\", Helvetica, Arial, sans-serif"
     },
     "thumbnail": {
       "_note": "Tuned for maximum contrast at roughly 320px wide in the YouTube sidebar.",
-      "background": "#000000",
-      "backgroundAlt": "#050505",
-      "accent": "#00ff88",
+      "background": "#0B1020",
+      "backgroundAlt": "#111833",
+      "accent": "#F59E0B",
       "textPrimary": "#ffffff",
-      "bug": "#ff5370",
-      "codeComment": "rgba(0,255,136,0.62)",
+      "bug": "#F43F5E",
+      "codeComment": "rgba(245,158,11,0.62)",
       "codeNormal": "rgba(255,255,255,0.88)",
       "fontFamily": "Inter"
+    }
+  },
+
+  "contentLimits": {
+    "_note": "OPTIONAL. Your own rule files that every skill and agent must read and follow before writing anything (for example obligations from an employer, client or contract). Keep them in a gitignored folder such as private/. Without files, the skills still apply a generic baseline: no material from your job, nothing that names an employer or client, novel code flagged for you to clear.",
+    "files": []
+  },
+
+  "video": {
+    "voice": {
+      "_note": "OPTIONAL. ElevenLabs voice for Shorts voiceovers (voice name and model). Leave empty and Claude picks a clear general-purpose voice from your account.",
+      "name": "",
+      "model": ""
     }
   },
 

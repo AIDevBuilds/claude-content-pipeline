@@ -1,4 +1,4 @@
-# AIDevBuilds Video Workflow
+# Video Workflow
 
 ## Setup
 
@@ -38,7 +38,7 @@ Use video-scout to research and validate: [topic you picked]
 ```
 Using the video-scriptwriter skill, write the full script
 ```
-→ Produces `video-data/script.md` — voiceover + on-screen notes per beat, structured around the AI Autopsy format.
+→ Produces `video-data/script.md` — voiceover + on-screen notes per beat, structured around the series format you pick.
 
 **4. Get the coding prompts** (if the video has a live build)
 ```
@@ -70,7 +70,7 @@ All of this workflow's output files live under `video-data/` in the project root
 
 **Where the audience-source tracking went:** this used to be a separate `utm_gen.py` script that tagged links with UTM params, shortened them via TinyURL, and called an external LLM for per-channel post copy. That's retired — `video-scriptwriter` (Step 5 above) now generates the post copy directly, using only facts already established in `script.md`/`youtube-seo.md`. The UTM tagging and shortening went with it: YouTube Studio's own **Analytics → Reach → Traffic Sources → External** report already buckets clicks by referrer domain automatically, UTM query params aren't parsed by YouTube's analytics at all, and shortened links get flagged by Reddit's spam filters more than plain ones. If you ever want click attribution *within* one platform (e.g. telling two different Reddit posts apart), that needs a real link tracker — worth revisiting later, not solved by UTM on a `youtu.be` link.
 
-**Thumbnail image generation:** handled by the `video-thumbnail` skill, which renders `template.html` in headless Chromium at 2x and downsamples to exactly 1280×720. Colours and the channel tag come from `config.json`, so re-branding means editing that file, not the template. Layout changes belong in `.claude/skills/video-thumbnail/template.html`.
+**Thumbnail image generation:** handled by the `video-thumbnail` skill, which renders `assets/template.html` in headless Chromium at 2x and downsamples to exactly 1280×720. Colours and the channel tag come from `config.json`, so re-branding means editing that file, not the template. Layout changes belong in `.claude/skills/video-thumbnail/assets/template.html`.
 
 ## Why it's split this way
 Same principle as the blog workflow: research (video-scout) is noisy and benefits from isolation so it doesn't clutter your main conversation with search results and RSS/API output. Scripting and SEO (video-scriptwriter) need your ongoing context — the actual conversation where you're refining the script — so that stays in the main thread as a skill, not delegated away.

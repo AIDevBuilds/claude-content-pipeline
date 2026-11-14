@@ -45,7 +45,7 @@ Fill in the `[NEEDS:]` markers, adjust anything that doesn't sound like you, add
 ```
 This draft is final, give me the SEO and publish details
 ```
-→ Returns `blog-data/seo-and-publish.md` with per-platform titles, descriptions, tags, and a cross-post checklist.
+→ Returns `blog-data/seo-and-publish.md` with per-platform titles, descriptions, tags, an X launch post plus a two-week drip of standalone posts, LinkedIn launch and follow-ups, Reddit/Hacker News copy where the post fits, and a cross-post checklist.
 
 All of this workflow's output files live under `blog-data/` in the project root, keeping them out of the way of the agent/skill config in `.claude/`.
 

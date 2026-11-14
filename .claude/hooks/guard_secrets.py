@@ -3,8 +3,14 @@
 PreToolUse guard: refuse any shell command that reads a credential file.
 
 Why this exists alongside the `permissions.deny` rules in settings.json:
-deny rules cover the Read tool, but they do not inspect shell commands, so
-`cat .env` would sail straight past them. This hook closes that path.
+Read deny rules also cover the shell file commands Claude Code recognizes
+(`cat`, `head`, `tail`, `sed`, `tee`) and redirections, but not an interpreter
+that opens the file itself, such as `python -c "open('.env').read()"`. This
+hook refuses any Bash command that names a secret path, whatever the program.
+
+It matches command text, so it cannot catch a command that never names the
+file (`grep -r TOKEN .`) or a script file that opens it internally. For
+OS-level enforcement, use Claude Code's sandbox.
 
 Contract: reads the hook payload as JSON on stdin, prints a decision as JSON on
 stdout, exits 0. Printing nothing means "no opinion, carry on".

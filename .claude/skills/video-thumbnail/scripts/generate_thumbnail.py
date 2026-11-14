@@ -10,19 +10,19 @@ Setup:
     ./setup.sh          (from the repo root — creates .venv and fetches Chromium)
 
 Usage:
-    .venv/bin/python .claude/skills/video-thumbnail/generate_thumbnail.py \
+    .venv/bin/python .claude/skills/video-thumbnail/scripts/generate_thumbnail.py \
         --video 01 \
-        --tag "AI AUTOPSY" \
-        --prefix "// I built a" \
-        --title "PRODUCTION\\nREST API" \
-        --highlight "PRODUCTION" \
-        --subtitle "with FastAPI + Claude Code · autopsy inside" \
-        --tools "Claude Code,FastAPI,Python" \
-        --active-tool "Claude Code" \
-        --badge-number "3" \
-        --badge-label "bugs\\nfound" \
-        --code "async def verify_token(token):\\n    return True  # BUG" \
-        --bugline "return True"
+        --tag "SYSTEM DESIGN" \
+        --prefix "// when the cache lies" \
+        --title "STALE\\nREADS" \
+        --highlight "STALE" \
+        --subtitle "Cache-aside · TTLs · invalidation" \
+        --tools "Redis,PostgreSQL,Python" \
+        --active-tool "Redis" \
+        --badge-number "2" \
+        --badge-label "fixes\\nshown" \
+        --code "def get(key):\\n  v = cache.get(key)\\n  return v" \
+        --bugline "cache.get(key)"
 
 Output -> video-data/images/thumbnail-01.png (1280x720)
 """
@@ -40,11 +40,11 @@ from pathlib import Path
 from PIL import Image
 from playwright.sync_api import sync_playwright
 
-SKILL_DIR = Path(__file__).resolve().parent
+SKILL_DIR = Path(__file__).resolve().parents[1]
 # .claude/skills/video-thumbnail -> repo root
 REPO_ROOT = SKILL_DIR.parents[2]
-TEMPLATE_PATH = SKILL_DIR / "template.html"
-FONT_PATH = SKILL_DIR / "fonts" / "Inter-latin.woff2"
+TEMPLATE_PATH = SKILL_DIR / "assets" / "template.html"
+FONT_PATH = SKILL_DIR / "assets" / "fonts" / "Inter-latin.woff2"
 
 
 # ── Config ────────────────────────────────────────────────────────────────────
@@ -80,7 +80,7 @@ def hex_to_rgb_triplet(value: str) -> str:
 def build_theme_css(cfg: dict) -> str:
     """Override the template's :root defaults with the configured palette."""
     theme = cfg.get("brand", {}).get("thumbnail", {})
-    accent = theme.get("accent", "#00ff88")
+    accent = theme.get("accent", "#F59E0B")
     try:
         accent_rgb = hex_to_rgb_triplet(accent)
     except ValueError as exc:
@@ -88,8 +88,8 @@ def build_theme_css(cfg: dict) -> str:
     return (
         "\n  <style>\n"
         "    :root {\n"
-        f"      --bg: {theme.get('background', '#000000')};\n"
-        f"      --bg-alt: {theme.get('backgroundAlt', '#050505')};\n"
+        f"      --bg: {theme.get('background', '#0B1020')};\n"
+        f"      --bg-alt: {theme.get('backgroundAlt', '#111833')};\n"
         f"      --accent: {accent};\n"
         f"      --accent-rgb: {accent_rgb};\n"
         f"      --text: {theme.get('textPrimary', '#ffffff')};\n"
@@ -163,8 +163,8 @@ def build_headline_main(title_raw: str, highlight: str) -> str:
 
 def build_code_visual(code_snippet: str, bug_line: str, theme: dict) -> str:
     """Build a styled code block for the right panel."""
-    accent_rgb = hex_to_rgb_triplet(theme.get("accent", "#00ff88"))
-    bug_colour = theme.get("bug", "#ff5370")
+    accent_rgb = hex_to_rgb_triplet(theme.get("accent", "#F59E0B"))
+    bug_colour = theme.get("bug", "#F43F5E")
     bug_rgb = hex_to_rgb_triplet(bug_colour)
 
     lines = code_snippet.replace("\\n", "\n").split("\n")[:10]
@@ -183,7 +183,7 @@ def build_code_visual(code_snippet: str, bug_line: str, theme: dict) -> str:
     return f"""
   <style>
     .face-area {{
-      background: {theme.get('background', '#0a0a0a')};
+      background: {theme.get('background', '#0B1020')};
       border: 1px solid rgba({accent_rgb},0.25);
       display: flex;
       flex-direction: column;
@@ -229,7 +229,7 @@ def build_code_visual(code_snippet: str, bug_line: str, theme: dict) -> str:
 def build_screenshot_html(encoded: str, code_snippet: str, bug_line: str, theme: dict) -> str:
     if not encoded:
         return build_code_visual(code_snippet, bug_line, theme)
-    accent_rgb = hex_to_rgb_triplet(theme.get("accent", "#00ff88"))
+    accent_rgb = hex_to_rgb_triplet(theme.get("accent", "#F59E0B"))
     return f"""
     <style>
       .face-area {{
@@ -335,19 +335,19 @@ def main():
             Examples:
 
               # No screenshot — shows the code snippet in the right panel
-              .venv/bin/python .claude/skills/video-thumbnail/generate_thumbnail.py \\
+              .venv/bin/python .claude/skills/video-thumbnail/scripts/generate_thumbnail.py \\
                 --video 01 \\
-                --tag "AI AUTOPSY" \\
-                --prefix "// I built a" \\
-                --title "PRODUCTION\\nREST API" \\
-                --highlight "PRODUCTION" \\
-                --subtitle "with FastAPI + Claude Code · autopsy inside" \\
-                --tools "Claude Code,FastAPI,Python" \\
-                --active-tool "Claude Code" \\
-                --badge-number "3" \\
-                --badge-label "bugs\\nfound" \\
-                --code "async def verify_token(token):\\n    return True  # BUG" \\
-                --bugline "return True"
+                --tag "SYSTEM DESIGN" \\
+                --prefix "// when the cache lies" \\
+                --title "STALE\\nREADS" \\
+                --highlight "STALE" \\
+                --subtitle "Cache-aside · TTLs · invalidation" \\
+                --tools "Redis,PostgreSQL,Python" \\
+                --active-tool "Redis" \\
+                --badge-number "2" \\
+                --badge-label "fixes\\nshown" \\
+                --code "def get(key):\\n  v = cache.get(key)\\n  return v" \\
+                --bugline "cache.get(key)"
 
               # With a screenshot from the build session in the right panel
               ... --screenshot ./my_screenshot.png

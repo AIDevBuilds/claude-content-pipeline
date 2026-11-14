@@ -12,7 +12,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # .claude/skills/blog-images -> repo root
-REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 
 if [ $# -lt 2 ]; then
   echo "usage: render_svg.sh input.svg output.png [width_px]" >&2
@@ -59,8 +59,29 @@ mkdir -p "$(dirname "$PNG_OUT")"
 import sys
 import cairosvg
 
+import re
+
 svg_in, png_out, width = sys.argv[1], sys.argv[2], int(sys.argv[3])
-cairosvg.svg2png(url=svg_in, write_to=png_out, output_width=width)
+svg = open(svg_in, encoding="utf-8").read()
+
+# cairo cannot read a CSS font fallback list; handed one it silently uses a
+# default face with no bold or italic. Keep the SVG source as written (it is
+# correct for browsers) and give cairo the first named family instead.
+SKIP = {"-apple-system", "blinkmacsystemfont", "system-ui", "sans-serif", "serif"}
+
+
+def first_family(stack):
+    for part in stack.split(","):
+        name = part.strip().strip('"').strip("'")
+        if name and name.lower() not in SKIP:
+            return name
+    return "sans-serif"
+
+
+svg = re.sub(r"font-family='([^']*)'", lambda m: f"font-family='{first_family(m.group(1))}'", svg)
+svg = re.sub(r'font-family="([^"]*)"', lambda m: f'font-family="{first_family(m.group(1))}"', svg)
+svg = re.sub(r"font-family:([^;}]*)", lambda m: f"font-family:'{first_family(m.group(1))}'", svg)
+cairosvg.svg2png(bytestring=svg.encode("utf-8"), write_to=png_out, output_width=width)
 PY
 
 echo "Rendered $PNG_OUT (width ${WIDTH}px)"

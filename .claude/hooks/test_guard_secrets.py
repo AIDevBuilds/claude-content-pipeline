@@ -46,7 +46,7 @@ MUST_ALLOW = [
     '[ -n "$YOUTUBE_API_KEY" ] && echo set',
     "ls -la",
     "./setup.sh",
-    ".claude/skills/blog-images/render_svg.sh a.svg b.png 1600",
+    ".claude/skills/blog-images/scripts/render_svg.sh a.svg b.png 1600",
     "git status",
     'echo "set up the environment first"',
     "python3 -m json.tool config.json",
