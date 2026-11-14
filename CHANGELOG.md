@@ -7,6 +7,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-14
+
 ### Added
 - `copy-reviewer` agent: an independent reviewer that reads a post, article or script cold and returns PASS or a numbered list of fixes. Used in a write-review loop (fresh agent per round, at most 5 rounds) by `blog-writer` and `video-scriptwriter`. A calling skill can send extra checks.
 - `video-shorts` skill: renders a branded vertical Short (1080x1920 MP4) from a voiceover and a small JSON spec with a fixed Remotion template and word-by-word captions.
