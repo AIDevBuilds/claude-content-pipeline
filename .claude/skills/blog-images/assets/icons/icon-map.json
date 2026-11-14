@@ -1,0 +1,158 @@
+{
+  "ai agent": {
+    "icon": "bot",
+    "why": "robot head reads as an AI agent"
+  },
+  "allowed / passed": {
+    "icon": "circle-check",
+    "why": "a tick in a circle reads as allowed"
+  },
+  "control (guardrail family)": {
+    "icon": "shield-check",
+    "why": "an enforced yes/no: the request is allowed or blocked"
+  },
+  "cross-module read / coupled to another module's data": {
+    "icon": "link",
+    "why": "a view on another module's tables ties you to its columns; provisional, swap if a better fit turns up"
+  },
+  "database table": {
+    "icon": "table",
+    "why": "grid of rows and columns: one table, not the whole database"
+  },
+  "denied / blocked": {
+    "icon": "circle-x",
+    "why": "an x in a circle reads as denied"
+  },
+  "detector (guardrail family)": {
+    "icon": "radar",
+    "why": "a scanner: estimates whether something looks like an attack, can miss"
+  },
+  "estimate / probability": {
+    "icon": "percent",
+    "why": "a % sign says likelihood, not a yes/no"
+  },
+  "estimation / statistical correction": {
+    "icon": "sigma",
+    "why": "a sum sign: correcting the reported rate with statistics"
+  },
+  "eval criteria / rubric": {
+    "icon": "list-checks",
+    "why": "a checklist with ticks: the rubric a person defines"
+  },
+  "factuality / grounding": {
+    "icon": "badge-check",
+    "why": "a verified mark: the answer is checked against sources"
+  },
+  "hook (must happen)": {
+    "icon": "webhook",
+    "why": "a webhook is the event-triggered callback a hook is"
+  },
+  "human labellers / people": {
+    "icon": "users",
+    "why": "a group of people: the humans whose labels are ground truth"
+  },
+  "input guardrail": {
+    "icon": "log-in",
+    "why": "an arrow entering: what the user sends in"
+  },
+  "judge validation (human labels)": {
+    "icon": "user-check",
+    "why": "a person with a tick: humans confirm the judge"
+  },
+  "mcp (reach)": {
+    "icon": "plug",
+    "why": "a plug reads as a connection to something outside"
+  },
+  "module (bounded context in a monolith)": {
+    "icon": "package",
+    "why": "a sealed box: one module with its own contents"
+  },
+  "newsletter: original note": {
+    "icon": "notebook-pen",
+    "why": "a notebook and pen: a written note"
+  },
+  "newsletter: the month's articles": {
+    "icon": "newspaper",
+    "why": "a newspaper: published articles"
+  },
+  "operational / cost limits": {
+    "icon": "gauge",
+    "why": "a dial: budgets, rate limits, timeouts"
+  },
+  "output guardrail": {
+    "icon": "message-square-text",
+    "why": "a reply bubble: what the model says back"
+  },
+  "privacy / data access": {
+    "icon": "lock",
+    "why": "access restricted to who is allowed"
+  },
+  "prompt (what i want now)": {
+    "icon": "message-circle",
+    "why": "a speech bubble reads as a request typed to the model"
+  },
+  "re-validation / re-check": {
+    "icon": "refresh-cw",
+    "why": "arrows round: check again when the model changes"
+  },
+  "refund / money moves": {
+    "icon": "banknote",
+    "why": "a banknote is the plainest money symbol"
+  },
+  "reporting store / data store": {
+    "icon": "database",
+    "why": "a separate store the modules feed; provisional, swap if a better fit turns up"
+  },
+  "retrieval / RAG": {
+    "icon": "database-zap",
+    "why": "a data store queried on demand"
+  },
+  "retry at every layer / repeated tries": {
+    "icon": "repeat",
+    "why": "loop arrows: the call goes round again"
+  },
+  "retry at one point / single retry": {
+    "icon": "repeat-1",
+    "why": "loop arrows with a 1: retries happen in one place only"
+  },
+  "row versions (mvcc)": {
+    "icon": "square-stack",
+    "why": "stacked copies: one row, several versions"
+  },
+  "series: read the source": {
+    "icon": "book-open-text",
+    "why": "an open book: one idea from a book being read"
+  },
+  "series: terms & tools": {
+    "icon": "book-a",
+    "why": "a dictionary: distinctions between terms"
+  },
+  "series: the tradeoff": {
+    "icon": "scale",
+    "why": "a balance: one decision, what it cost"
+  },
+  "series: think in systems": {
+    "icon": "network",
+    "why": "connected boxes: system boundaries and integration"
+  },
+  "series: what ai gets wrong": {
+    "icon": "circle-alert",
+    "why": "a warning mark: AI's failure modes"
+  },
+  "skill (judgment)": {
+    "icon": "graduation-cap",
+    "why": "a graduation cap reads as learned know-how"
+  },
+  "tool calls": {
+    "icon": "wrench",
+    "why": "a tool being used: the agent acting"
+  },
+  "warning / should not happen": {
+    "icon": "triangle-alert",
+    "why": "a warning triangle flags the refund that shouldn't have gone through"
+  },
+  "workflow / state machine": {
+    "icon": "workflow",
+    "why": "steps connected in an order"
+  }
+}

@@ -13,6 +13,12 @@ service-account*.json
 # ── Local configuration ───────────────────────────────────────────────────────
 # Your identity/brand values. config.example.json is the committed template.
 config.json
+# Personal Claude Code instructions for this project (see Claude Code docs).
+CLAUDE.local.md
+
+# ── Private notes ─────────────────────────────────────────────────────────────
+# Personal notes (e.g. the content-limit files in config). Never commit.
+private/
 
 # ── Generated content ─────────────────────────────────────────────────────────
 # This is a tooling repo. Your drafts, scripts and images stay local.
@@ -20,6 +26,8 @@ blog-data/*
 !blog-data/.gitkeep
 video-data/*
 !video-data/.gitkeep
+# Render scratch anywhere (e.g. video-data/.cache/shorts/). Safe to delete.
+**/.cache/
 
 # ── Python ────────────────────────────────────────────────────────────────────
 .venv/

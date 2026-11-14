@@ -1,0 +1,20 @@
+{
+  "name": "video-shorts",
+  "private": true,
+  "description": "Branded vertical Shorts (1080x1920) from a voiceover and a caption spec, rendered with Remotion.",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts Short"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.538",
+    "@remotion/media-utils": "4.0.538",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.538"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "typescript": "5.9.3"
+  }
+}

@@ -34,9 +34,10 @@ diagram is carrying more than one idea and should be split.
 meet AA contrast on white. The other accents hold up as-is.
 
 ## Type
-Use `brand.diagram.fontStack`. It is a system-font stack on purpose: cairosvg
-renders it consistently without embedding font files, and an embedded font is a
-dependency that quietly breaks on someone else's machine.
+Use `brand.diagram.fontStack`. It is a system-font stack on purpose: no embedded font
+files to break on someone else's machine. cairosvg cannot read a fallback list, so the
+card renderer passes it the first named family (`render_font()`); without that, bold and
+italic silently render as regular.
 
 Two weights maximum per diagram: regular for labels, 600 for the one thing being
 emphasised.

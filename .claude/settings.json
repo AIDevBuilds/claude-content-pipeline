@@ -37,8 +37,8 @@
       "Read(./.env.example)",
       "WebSearch",
       "Bash(./setup.sh)",
-      "Bash(./.claude/skills/blog-images/render_svg.sh:*)",
-      "Bash(.venv/bin/python .claude/skills/video-thumbnail/generate_thumbnail.py:*)",
+      "Bash(./.claude/skills/blog-images/scripts/render_svg.sh:*)",
+      "Bash(.venv/bin/python .claude/skills/video-thumbnail/scripts/generate_thumbnail.py:*)",
       "Bash(.venv/bin/yt-dlp:*)"
     ]
   },
